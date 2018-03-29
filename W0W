@@ -1,0 +1,40 @@
+<html lang="en">
+	
+	<head>
+
+		<meta charset="utf-8">
+		
+		<title>PacMan</title>
+		<script src="cods.js"></script>
+		<link rel="stylesheet" type="text/css" href="mais.css"/>
+		<link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
+	</head>
+
+	<body onload="home()">
+		<h1>
+			Pacman
+		</h1>
+		<canvas id="canvas" width="454" height="529">
+			<p>
+				<img src="images/Pac.gif" alt="s" id="home"/>
+				<img src="images/background.png" alt="s" id="img" width="111%"/>
+				<img src="images/Original_PacMan.png" alt="s" id="imgLeft"/>
+				<img src="images/Pacman2.png" alt="s" id="imgDown"/>
+				<img src="images/Pacman3.png" alt="s" id="imgRight"/>
+				<img src="images/Pacman4.png" alt="s" id="imgUp"/>
+				<img src="images/Ghost1.png" alt="s" id="ghost"/>
+				<img src="images/ghost2.png" alt="s" id="ghost1"/>
+				<img src="images/ghost3.png" alt="s" id="ghost2"/>
+				<img src="images/Scared.gif" alt="s" id="scared"/>
+				<!--<img src="images/PacmanBlack.png" alt="s" id="imgBLeft" width="19px;"/>
+				<img src="images/Pacman2Black.png" alt="s" id="imgBDown" />
+				<img src="images/Pacman3Black.png" alt="s" id="imgBRight" width="19px;"/>
+				<img src="images/Pacman4Black.png" alt="s" id="imgBUp" width="19px;"/> -->
+			</p>
+		</canvas>
+		
+	</body>
+	
+	
+	
+</html>

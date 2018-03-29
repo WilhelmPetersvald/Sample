@@ -1,0 +1,1300 @@
+<html lang="en">
+	
+	<head>
+
+		<meta charset="utf-8">
+		
+		<title>PacMan</title>
+		<script>//Pacman Variables
+var xaxis = 227;
+var yaxis = 403;
+var shape = 2;
+var Code;
+var ball = 2;
+var direction = "left";
+var lives = 3;
+var bigdot1 = true;
+var bigdot2 = true;
+var bigdot3 = true;
+var bigdot4 = true;
+
+var xaxis2 = 210;
+var yaxis2 = 346;
+var degrees;
+var movement= true;
+var allowrun = false;
+var allowrun2 = false;
+//Startscreen
+var playStyle = "single";
+
+//Ghost1 or Player 2 Variables
+var switch1 = true;
+var ghostCode;
+var ghostXaxis = 223;
+var ghostYaxis = 213;
+var blockedchoice = "null";
+var pacmanPosition = [];
+var place = -2;
+var blocks=[1,1]
+var stop = 0;
+
+//ghost2 
+var ghostXaxis1 = 223;
+var ghostYaxis1 = 243;
+var switch2 = true;
+var ball1 = 2;
+var allow1 = true;
+var third1 = "null";
+var wait = 1;
+
+var allow = true;
+var a=0;
+var arrowYAxis = 295;
+var direction1 = "1"
+var direction2 = "1"
+
+//End screen 
+var players =[];
+var playersScore = [];
+
+//Pellets/Scoring
+var singleXaxisPellets = [32,49,69,89,129,149,169,189,209,256,274,294,314,334,354,374,394,414,429,32,111,209,256,350,429,32,111,209,209,209,209,209,256,350,429,32,111,209,256,350,429,32,102,209,256,350,429,32,49,69,89,109,129,149,169,189,209,224,239,256,274,294,314,334,374,394,414,429,32,111,160,303,350,429,32,111,160,303,350,429,32,49,69,89,109,160,180,195,210,256,276,291,305,350,370,390,410,429,111,111,111,111,111,111,111,111,111,111,111,111,111,111,111,111,350,350,350,350,350,350,350,350,350,350,350,350,350,350,350,32,49,69,89,129,149,169,189,209,256,274,294,314,334,374,394,414,429,32,209,256,429,32,209,256,429,32,49,69,89,160,180,195,210,256,276,291,305,370,390,410,429,32,49,69,140,163,186,209,223,255,278,301,324,398,414,429,69,163,301,398,69,163,301,398,32,49,69,89,109,129,149,169,189,209,224,239,256,274,294,314,334,354,374,394,414,429,32,209,256,429,32,209,256,429];
+var singleYaxisPellets = [62, 62, 62, 62, 62,62,62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 77, 77, 77, 77, 77, 77, 90, 90, 90, 90, 90, 90, 103, 103, 103, 103, 103, 103, 103,124,124,124,124,124,124,124,124,124,124,124, 124, 124, 124, 124,124,124, 124, 124, 124, 124, 124, 124, 124, 124, 124, 124, 124, 145, 145, 145,145,145,145,155,155,155,155,155,155,172,172,172,172,172,172,172,172,172,172,172,172,172,172,172,172,172,172,192,192,212,232,252,272,292,312,332,347,365,385,409,425,445,459,192,212,232,252,272,292,312,332,347,365,385,409,425,445,459,365,365,365,365,365,365,365,365,365,365,365,365,365,365,365,365,365,365,379,379,379,379,392,392,392,392,461,461,461,461,461,461,461,461,461,461,461,461,461,461,461,461,412,412,412,412,412,412,412,412,412,412,412,412,412,412,412,426,426,426,426,445,445,445,445,506,506,506,506,506,506,506,506,506,506,506,506,506,506,506,506,506,506,506,506,506,506,476,476,476,476,489,489,489,489];
+var score=0;
+var eaten = 0;
+
+//Other
+var randomvar = 0;
+var firstpart = true;
+
+
+//Start Of Game
+function Change(key){
+	//To change the player 1 key if needed
+	var key1 = key.which || key.keyCode;
+	if(key1==68||key1==65||key1==83||key1==87){
+		Code = key1;
+	} 
+}
+function ghostChange(key){
+	//To change the ghost key if needed
+	var key1 = key.which || key.keyCode;
+	if(key1==37||key1==38||key1==39||key1==40){
+		ghostCode = key1;
+	} 
+}
+function checkright(axis,yaxis){
+	//finds canvas
+	//To check if an object can move rigth
+	var canvas = document.getElementById("canvas");
+	var ctx = canvas.getContext('2d');
+	var a = 0;
+	
+	//checks 17 pixels infont of pacman to see if any are above blue
+	for(var i = 1; i<18;i++){
+		var axis2 = Number(yaxis) + Number(i);
+		var data = ctx.getImageData((axis+20), (axis2),1,1);
+		var color = data.data; 
+		if(((color[2])<170) || ((color[1])==color[0] && (color[1] != 0))){
+			a++;
+		}
+	}
+	//over 12 is good to go
+	if(a>12){
+		return true;
+	} else {
+		return false;
+	}
+}
+function checkleft(axis,yaxis){
+	//finds canvas
+	//To check if an object can move left
+	var canvas = document.getElementById("canvas");
+	var ctx = canvas.getContext('2d');
+    var a = 0;
+	
+	//same as above
+	for(var i = 1; i<18;i++){
+		var axis2 = Number(yaxis) + Number(i);
+		var data = ctx.getImageData((axis-1), (axis2),1,1);
+		var color = data.data; 
+		if(((color[2])<170) || ((color[1])==color[0] && (color[1] != 0))){
+			a++;
+		}
+	}
+	if(a>12){
+		return true;
+	} else {
+		return false;
+	}
+}
+function checkdown(axis,yaxis){
+	//same as above 
+	var canvas = document.getElementById("canvas");
+	var ctx = canvas.getContext('2d');
+	var a = 0;
+	for(var i = 1; i<18;i++){
+		var xaxis = Number(axis) + Number(i);
+		var data = ctx.getImageData((xaxis), (yaxis+20),1,1);
+		var color = data.data; 
+		if(((color[2])<170) || ((color[1])==color[0] && (color[1] != 0))){
+			a++;
+		}
+	}
+	
+
+	if(a>12){
+		return true;
+	} else {
+		return false;
+	}
+}
+
+function checkup(axis,yaxis){
+	//same as above
+	var canvas = document.getElementById("canvas");
+	var ctx = canvas.getContext('2d');
+	var a = 0;
+	for(var i = 1; i<18;i++){
+		var xaxis = Number(axis) + Number(i);
+		var data = ctx.getImageData((xaxis), (yaxis-1),1,1);
+		var color = data.data; 
+		if(((color[2])<170) || ((color[1])==color[0] && (color[1] != 0))){
+			a++;
+		}
+	}
+	
+
+	if(a>12){
+		return true;
+	} else {
+		return false;
+	}
+}
+function Move(key){
+	//finds canvas
+	var canvas = document.getElementById("canvas");
+	var ctx = canvas.getContext('2d');
+	
+	//finds key press
+	var key1 = key.which || key.keyCode;
+	
+			if((key1 == 100)|| (Code == 68)){
+				// The D Key - goes to the Right
+				var allow = checkright(xaxis,yaxis);
+				
+				//If no blue
+				if (allow){
+					//move this way to right
+					if(xaxis == 444){
+						xaxis = 15;
+					}else{
+					xaxis = xaxis + 1;
+					}
+					//Sets variables
+					direction = "right";
+					
+					//draws everything
+					eraseball();
+					Code = 68;
+					allow = false;
+					
+					//repeats
+					setTimeout(Move, 10, Code);
+					clearTimeout(Move, 10, Code)
+				}
+				
+
+			} else if((key1 == 97) || (Code == 65)){
+				// The A Key - goes to the left
+				
+				//same but going to left
+				var allow = checkleft(xaxis,yaxis);
+				
+				if(allow){ 
+					if(xaxis == 15){
+						xaxis = 444;
+					}else {
+						xaxis = xaxis - 1;
+					}
+					direction = "left";
+					eraseball();
+					Code = 65;
+					allow = false;
+					setTimeout(Move, 10, Code);
+				}
+				
+			} else if((key1 == 115) || (Code == 83)){
+				// The S Key - goes to the Bottom
+				
+				var allow = checkdown(xaxis,yaxis);
+				//same but going to bottom
+				
+				if(allow){
+					yaxis = yaxis + 1;
+					direction = "down";
+					eraseball();
+					Code = 83;
+					allow = false;
+					setTimeout(Move, 10, Code);
+				 }
+			} else if((key1 == 119) || (Code == 87)){
+				// The W Key - goes to the top
+				var allow = checkup(xaxis,yaxis);
+				
+				//same but going to top
+				if (allow){
+					yaxis = yaxis - 1;
+					direction = "up";
+					eraseball();
+					Code = 87;
+					allow = false;
+					setTimeout(Move, 10, Code)
+				}
+				
+			}
+	    //returns needed variables
+		return Code && randomvar &&pacmanPosition &&place;
+}
+function doubleGhostMove(key){
+	// ghost movement is relativily the same as normal move
+	var canvas = document.getElementById("canvas");
+	var ctx = canvas.getContext('2d');
+	var key1 = key.which || key.keyCode;
+	
+			if((key1 == 39)|| (ghostCode == 39)){
+				// The Right Key - goes to the Right
+				var allow = checkright(ghostXaxis,ghostYaxis);
+				
+				// if no blue go to right
+				if (allow){
+					if(ghostXaxis == 444){
+						ghostXaxis = 15;
+					}else{
+					 ghostXaxis = ghostXaxis + 1;
+					}
+					//draw 
+					eraseball();
+					ghostCode = 39;
+					allow = false;
+					
+					//repeat
+					setTimeout(doubleGhostMove, 40, ghostCode);
+					clearTimeout(doubleGhostMove, 40, ghostCode)
+				}
+				
+
+			} else if((key1 == 37) || (ghostCode == 37)){
+				// The Left Key - goes to the left same as above
+				
+				var allow = checkleft(ghostXaxis,ghostYaxis);
+				
+				if(allow){ 
+					if(ghostXaxis == 15){
+						ghostXaxis = 444;
+					}else {
+						ghostXaxis = ghostXaxis - 1;
+					}
+					eraseball();
+					ghostCode = 37;
+					allow = false;
+					setTimeout(doubleGhostMove, 25, ghostCode);
+				}
+				
+			} else if((key1 == 40) || (ghostCode == 40)){
+				// The Down Key - goes to the Bottom same as above
+				
+				var allow = checkdown(ghostXaxis,ghostYaxis);
+				
+				
+				if(allow){
+					ghostYaxis = ghostYaxis + 1;
+					eraseball();
+					ghsotCode = 40;
+					allow = false;
+					setTimeout(doubleGhostMove, 25, ghostCode);
+				 }
+			} else if((key1 == 38) || (ghostCode == 38)){
+				// The Up Key - goes to the top same as above
+				var allow = checkup(ghostXaxis,ghostYaxis);
+				
+				if (allow){
+					ghostYaxis = ghostYaxis - 1;
+					eraseball();
+					ghostCode = 38;
+					allow = false;
+					setTimeout(doubleGhostMove, 25, ghostCode)
+				}
+				
+			} 
+	return ghostCode;
+}
+function ghostMove(){
+	// First AI code This ghost follows directly
+	var canvas = document.getElementById("canvas");
+	var ctx = canvas.getContext('2d') ;
+	//var key1 = key.which || key.keyCode;
+	
+	// every apx 2 seconds finds a new location
+	if(randomvar == 200){
+		randomvar = 0;
+		pacmanPosition.push(xaxis);
+		pacmanPosition.push(yaxis);
+		place = place +2;
+		ball++;
+	} else if(randomvar == 0){
+		pacmanPosition.push(xaxis);
+		pacmanPosition.push(yaxis);
+		place = place +2 ;
+	}
+	randomvar = randomvar + 100;
+	
+	if(switch1){
+	if(ball % 2 == 0){ 
+		//FInds if it is better to go left or right
+		var direction = pacmanPosition[place];
+		var first = direction-ghostXaxis;
+		var second = ghostXaxis-direction;
+		if(second>0){
+			var third = "left";
+		}else if(first>0){
+			var third = "right";
+		}else if(second==0){
+			var third = "same";
+		}
+		
+		if(ghostXaxis == 151 && ghostYaxis == 213){
+			third = "down";
+		}
+		;
+		if(third == "right"){
+				// The Right Arrow Key - goes to the Right
+				var allow = checkright(ghostXaxis,ghostYaxis);
+				
+				if (allow){
+					
+					//Resets blocks this variable checks if it is blocked on  a certain side
+					blocks[0]= 0;
+					ghostXaxis = ghostXaxis + 1;
+					
+					// draw ghost
+					drawghost();
+					GhostCode = 39;
+					allow = false;
+					
+					//repeats
+					setTimeout(ghostMove, 5, Code);
+				} else {
+					ball++;
+					blocks[0] = "right";
+					stop++;
+				}
+				
+
+			} else if(third == "left"){
+				// The A Key - goes to the Right
+				// Same but to the left
+				var allow = checkleft(ghostXaxis,ghostYaxis);
+				
+				if(allow){ 
+					blocks[0]= 0;
+					ghostXaxis = ghostXaxis - 1;
+					drawghost();
+					GhostCode = 37;
+					allow = false;
+					setTimeout(ghostMove, 5, Code);
+				} else {
+					ball++;
+					blocks[0] = "left";
+					stop++;
+				}
+			} else {
+				ball++;
+				blocks[0] = "same";
+				stop++;
+			}
+	} else {
+		//Same but up and down
+		var direction = pacmanPosition[place+1];
+		var first = ghostYaxis-direction;
+		var second = direction-ghostYaxis;
+		if(second>0){
+			var third = "down";
+		}else if(first>0){
+			var third = "up";
+		}
+		if(third == "up"){
+				
+				var allow = checkup(ghostXaxis,ghostYaxis);
+				
+				if(allow){
+					blocks[1] = 0;
+					ghostYaxis = ghostYaxis - 1;
+					drawghost();
+					GhostCode = 40;
+					allow = false;
+					setTimeout(ghostMove, 5, Code);
+				 } else {
+					ball++;
+					 
+					//diffence of blocks as the second in the array checks up and down
+					blocks[1] = "up";
+					stop++;
+				}
+			} else if(third == "down"){
+					var allow = checkdown(ghostXaxis,ghostYaxis);
+				
+					if (allow){
+						blocks[1] = 0;
+						ghostYaxis = ghostYaxis + 1;
+						drawghost();
+						GhostCode = 38;
+						allow = false;
+						setTimeout(ghostMove, 5, Code)
+					} else {
+						ball++;
+						blocks[1] = "down";
+						stop++;
+				}
+			} else {
+					ball++;
+					blocks[1] = "same";
+					stop++;
+				}
+			
+			
+	}
+    // if two blocked sides run this
+	if(stop==2){
+		stop = 0;
+		blocked();
+	}}
+	//console.log(blocks + " " + stop)
+	return Code && randomvar && pacmanPosition && place && blocks && stop; 
+		
+}
+function ghostMove1(){
+	// Second ghost but it goes randomly
+	var canvas = document.getElementById("canvas");
+	var ctx = canvas.getContext('2d') ;
+
+	if(switch2){
+	if(ball1 % 2 == 0 || third1 == "right"|| third1 == "left"){
+		//chooses direction
+		if(third1 == "null"){
+			var first = Math.floor(Math.random()*2);
+			if(first == 0){
+				third1 = "right";
+			}else if(first == 1){
+				third1 = "left";
+			}
+		}
+		
+		if(third1 == "right"){
+				// The Right Arrow Key - goes to the Right
+				var allow = checkright(ghostXaxis1,ghostYaxis1);
+			
+			//continues in that direction till it hits a wall
+				if (allow){
+					ghostXaxis1 = ghostXaxis1 + 1;
+					drawghost1();
+					GhostCode = 39;
+					allow = false;
+					setTimeout(ghostMove1, 100, Code);
+					third1 = "right";
+				} else {
+					ball1++;
+					third1 = "null";
+				}
+				
+
+			} else if(third1 == "left"){
+				// The A Key - goes to the Right
+				
+				var allow = checkleft(ghostXaxis1,ghostYaxis1);
+				
+				if(allow){ 
+					ghostXaxis1 = ghostXaxis1 - 1;
+					drawghost1();
+					allow = false;
+					setTimeout(ghostMove1,100, Code);
+					third1 = "left";
+				} else {
+					third1 = "null";
+				}
+			}
+	} else if((ball1 % 1 == 0)|| third1 == "down" || third1 == "up") {
+		// same but up and down
+		var first = Math.floor(Math.random()*2);
+		if(third1 == "null"){
+			
+				if(first == 0){
+					third1 = "down"
+				}else if(first == 1){
+					third1 = "up"
+				}
+		}
+		if(third1 == "up"){
+				
+				var allow = checkup(ghostXaxis1,ghostYaxis1);
+				
+				if(allow){
+					ghostYaxis1 = ghostYaxis1 - 1;
+					drawghost1();
+					allow = false;
+					setTimeout(ghostMove1, 100, Code);
+					third1 = "up";
+				 } else {
+					ball1++;
+					 third1 = "null";
+				}
+			} else if(third1 == "down"){
+				var allow = checkdown(ghostXaxis1,ghostYaxis1);
+					if (allow){
+						ghostYaxis1 = ghostYaxis1 + 1;
+						drawghost1();
+						allow = false;
+						setTimeout(ghostMove1, 100, Code)
+						third1 = "down";
+					} else {
+						ball1++;
+						third1 = "null";
+				}
+			} else {
+					ball1++;
+				}
+			
+			
+	}
+		if(wait == 200){
+			// to slow down this ghost
+			ball1 = null;
+			third1 = null;
+			if(ghostXaxis1 < 223){
+				ghostXaxis1 = ghostXaxis1 +1;
+				drawghost1();
+			} else if(ghostXaxis1 > 223){
+				ghostXaxis1 = ghostXaxis1 -1;
+				drawghost1();
+			} else if(ghostXaxis1 == 223){
+				ghostYaxis1--;
+			} 
+			if(ghostYaxis1 == 213){
+				ball1 = 2;
+			    third1 = "null";
+				wait++;
+			}
+		} else if ((wait%221) == 0){
+			ball1 = null;
+			third1 = null;
+			wait++;
+		} else if(wait % 222 == 0){
+			ball1 = 2;
+			third1 = "null";
+			wait++;
+		} else {
+			wait++;
+		}
+	return third1 && wait && ball1; 
+		
+}
+	}
+function runaway(){
+	//ghost can be caught during this time
+	if(allowrun){
+		switch1 = false;
+		//goes up and to the right for 10 seconds
+		var allow = checkright(ghostXaxis,ghostYaxis);
+		if (allow){
+			ghostXaxis = ghostXaxis + 1;
+			setTimeout(runaway,10);
+		}  else {
+			var allow = checkup(ghostXaxis,ghostYaxis);
+			if(allow){
+				ghostYaxis = ghostYaxis - 1;
+				setTimeout(runaway,10);
+			}
+		}
+	}
+	setInterval(function(){switch1 = true; return switch1;},10000);
+
+	return switch1;
+		
+}
+function runaway2(){
+	//ghost2 can be caught during this time
+	if(allowrun2){
+		switch2 = false;
+		//goes up and to the right for 10 seconds
+		var allow = checkleft(ghostXaxis1,ghostYaxis1);
+		if (allow){
+			ghostXaxis1 = ghostXaxis - 1;
+			setTimeout(runaway2,10);
+		}  else {
+			var allow = checkdown(ghostXaxis1,ghostYaxis);
+			if(allow){
+				ghostYaxis1 = ghostYaxis1 + 1;
+				setTimeout(runaway2,10);
+			}
+		}
+	}
+	setInterval(function(){switch2 = true; return switch2;},10000);
+
+	return switch2;
+		
+}
+function blocked(){
+	// if blocked on certain sides this runs
+	var canvas = document.getElementById("canvas");
+	var ctx = canvas.getContext('2d') ;
+	direction2 = 0;
+	if(blocks[0]=="same" && (blocks[1]=="down"||blocks[1]=="up")){
+		// stops normal movement
+		switch1 = false;
+		
+		//if this is on the same level but needs to go down run this
+		if(blockedchoice == "null"){
+			// chooses direction
+			var first = Math.floor(Math.random()*2);
+			if(first == 0){
+				blockedchoice = "right";
+			}else if(first == 1){
+				blockedchoice = "left";
+			}
+		}
+		
+		//checks forward color
+		if(blockedchoice=="left"){
+				var allow = checkleft(ghostXaxis,ghostYaxis);
+		} else if(blockedchoice=="right") {
+				var allow = checkright(ghostXaxis,ghostYaxis);
+		}
+		if(allow){ 
+			
+			if(blockedchoice=="left"){
+				ghostXaxis = ghostXaxis - 1;
+			} else {
+				ghostXaxis = ghostXaxis + 1;
+			}
+
+			drawghost();
+			allow = false;
+			
+			//repeats
+			setTimeout(blocked, 3, Code);
+		} else {
+			//at end it jumps so it does not run into other blocks
+			var first = Math.floor(Math.random()*2);
+			if(first == 0){
+				var allow1 = checkup(ghostXaxis,ghostYaxis);
+				if(allow1){
+					ghostYaxis = ghostYaxis + 15;
+				} 
+			}else if(first == 1){
+				var allow1 = checkdown(ghostXaxis,ghostYaxis);
+				if(allow1){
+					ghostYaxis = ghostYaxis - 15;
+				} 
+			}
+
+
+			blockedchoice="null";
+			drawghost();
+
+			   switch1 = true;
+			checker();
+	 }
+	} else if(blocks[1]=="same" && (blocks[0]=="left"||blocks[0]=="right")){
+		// Same idea
+		direction2 = 0;
+		switch1 = false;
+		if(blockedchoice == "null"){
+			var first = Math.floor(Math.random()*2);
+			if(first == 0){
+				blockedchoice = "down";
+			}else if(first == 1){
+				blockedchoice = "up";
+			}
+		}
+		if(blockedchoice=="down"){
+		      var allow = checkup(ghostXaxis,ghostYaxis);
+		} else if(blockedchoice=="up"){
+			  var allow = checkdown(ghostXaxis,ghostYaxis);
+		}
+					if (allow){
+						if(blockedchoice=="down"){
+						ghostYaxis = ghostYaxis + 1;
+						} else if(blockedchoice=="up"){
+							ghostYaxis = ghostYaxis - 1;
+						}
+						drawghost();
+						allow = false;
+						setTimeout(blocked, 3, Code)
+						}  else {
+						var allow = checkleft(ghostXaxis,ghostYaxis);
+						if(allow){
+							ghostYaxis = ghostYaxis + 15;
+						}  else {
+							ghostYaxis = ghostYaxis - 15;
+						}
+						blockedchoice="null";
+						drawghost();
+						switch1 = true;
+						checker();
+				 }
+	}// This makes the game glitch
+	/*else if((blocks[1]=="up"||blocks[1]=="down") && (blocks[0]=="left" || blocks[0]=="right")){
+				if(blocks[1]=="up"){
+					var allow = checkdown(ghostXaxis,ghostYaxis);
+				} else if(blocks[1]=="down"){
+					var allow = checkup(ghostXaxis,ghostYaxis);
+				}
+				if (allow){
+						blockedchoice == "null";
+						if(blocks[1]=="up"){
+							ghostYaxis = ghostYaxis + 1;
+						}else if(blocks[1]=="down"){
+							ghostYaxis = ghostYaxis - 1;
+						}
+						drawghost();
+						allow = false;
+						setTimeout(blocked, 3, Code)
+						switch1 = false;
+				} else {
+					direction1 = 0;
+					direction2++;
+					var first = Math.floor(Math.random()*2);
+					console.log(first)
+					if(direction2 ==2){
+						 allow = checkright(ghostXaxis,ghostYaxis);
+					}else if(direction2 == 3){
+						allow = checkleft(ghostXaxis,ghostYaxis);
+					}
+					if(allow){
+						if(direction2 == 2){
+						ghostXaxis = ghostXaxis + 15;
+						}else {
+						ghostXaxis = ghostXaxis - 15;
+						}
+					}  else {
+						if(direction2 == 3){
+						ghostXaxis = ghostXaxis - 15;
+						}else {
+						ghostXaxis = ghostXaxis + 15;
+						}
+					}
+					drawghost();
+					switch1 = true;
+					checker();
+				}
+			}*/
+				 
+	return blockedchoice;
+}
+function draw() {
+	//This draws board and avatars
+	if(lives > 0){
+		var canvas = document.getElementById("canvas");
+	   var ctx = canvas.getContext('2d');
+		
+		//blacks out everything
+		ctx.fillStyle = 'rgb(0,0, 0)';
+		ctx.fillRect(0, 0, canvas.width, canvas.height);
+		
+		//puts in background
+		var img = document.getElementById("img");
+		ctx.drawImage(img,10,40);
+		
+		//puts in dots
+		for(var i=0;i<=singleXaxisPellets.length; i++){
+			ctx.fillStyle = 'rgb(255,255, 255)';
+			ctx.beginPath();
+			ctx.arc(singleXaxisPellets[i], singleYaxisPellets[i], 2, 0, (Math.PI*2), true); 
+			ctx.fill();
+			ctx.closePath();
+		};
+		
+		eraseball(); 
+
+		setTimeout(draw,10);
+	}
+	if(lives == 0){
+		endGame();
+	}
+
+}
+function checker(){
+	// This function is to keep repeating the ghost movement
+	if(lives > 0){
+		if(switch1){
+			allowrun = false;
+			switch1 = true;
+			setTimeout(ghostMove,5);
+			setTimeout(checker,5);
+			switch1 = true;
+		}
+	}
+	return allowrun;
+}
+function checker1(){
+	// This function is to keep repeating the ghost movement
+	if(lives > 0){
+	if(switch2){
+		allowrun2 = false;
+			setTimeout(ghostMove1,200);
+			setTimeout(checker1,200);
+			switch2 = true;
+		}
+	}
+	
+}
+function eraseball() {
+	if(lives > 0){
+	var canvas = document.getElementById("canvas");
+	var ctx = canvas.getContext('2d');
+	
+    //draws balls
+	for(var i=0;i<=singleXaxisPellets.length; i++){
+		ctx.fillStyle = 'rgb(255,255, 255)';
+		ctx.beginPath();
+		if((singleXaxisPellets[i]==32 ||singleXaxisPellets[i]==429) && (singleYaxisPellets[i]==124||singleYaxisPellets[i]==412)){
+			ctx.arc(singleXaxisPellets[i], singleYaxisPellets[i], 6, 0, (Math.PI*2), true); 
+		}else{
+			ctx.arc(singleXaxisPellets[i], singleYaxisPellets[i], 2, 0, (Math.PI*2), true); 
+		}
+		ctx.fill();
+		ctx.closePath();
+	};
+	drawball();
+	}
+}
+function drawball() {
+	if(lives > 0){
+		// draws other avatars
+		drawghost();
+		if(playStyle == "single"){
+			drawghost1();
+		}
+		var canvas = document.getElementById("canvas");
+		var ctx = canvas.getContext('2d') ;
+		
+		//right scores
+		ctx.fillStyle = 'rgb(0,0, 0)';
+		ctx.fillRect(0, 0,50, 40);
+		ctx.font="10px 'Press Start 2P'";
+		ctx.fillStyle=("white");
+		ctx.fillText("Score",20,20);
+		ctx.fillText(score,20,30);
+		
+		//checks if a pellet has been eaten and adds score
+		for(var i=0;i<=singleXaxisPellets.length; i++){
+			if(playStyle=="single"){
+			if(((32-xaxis)<(10)&&((32-xaxis)>(0)))&&((122-yaxis)<(10)&&((122-yaxis)>(0))) && bigdot1 == true){
+				bigdot1 = false;
+				allowrun = true;
+				runaway();
+				runaway2();
+
+				setInterval(checker,2000);
+			}else if(((429-xaxis)<(10)&&((429-xaxis)>(0)))&&((122-yaxis)<(10)&&((122-yaxis)>(0))) && bigdot2 == true){
+				bigdot2 = false;
+				allowrun = true;
+				runaway();
+				runaway2();
+				setInterval(checker,2000);
+			}else if(((32-xaxis)<(10)&&((32-xaxis)>(0)))&&((412-yaxis)<(10)&&((406-yaxis)>(0))) && bigdot3 == true){
+				bigdot3 = false;
+				allowrun = true;
+				runaway();
+				runaway2();
+				setInterval(checker,2000);
+			}else if(((429-xaxis)<(10)&&((429-xaxis)>(0)))&&((412-yaxis)<(10)&&((406-yaxis)>(0))) && bigdot4 == true){
+				bigdot4 = false;
+				allowrun = true;
+				runaway();
+				runaway2();
+				setInterval(checker,2000);
+		} else if(((singleXaxisPellets[i]-xaxis)<(15))&&((singleXaxisPellets[i]-xaxis)>(0))&&((singleYaxisPellets[i]-yaxis)<(15))&&((singleYaxisPellets[i]-yaxis)>(0))){
+				score = score + 10;
+				singleXaxisPellets[i] = 0;
+				singleYaxisPellets[i] = 0;
+				eaten = eaten +1;
+		}
+			} else {
+				if(((singleXaxisPellets[i]-xaxis)<(15))&&((singleXaxisPellets[i]-xaxis)>(0))&&((singleYaxisPellets[i]-yaxis)<(15))&&((singleYaxisPellets[i]-yaxis)>(0))){
+				score = score + 10;
+				singleXaxisPellets[i] = 0;
+				singleYaxisPellets[i] = 0;
+				eaten = eaten +1;
+		} }
+	};
+		//animation
+	if((shape%2)==0){
+		if(direction == "right"){
+			var img = document.getElementById("imgRight");
+		} else if(direction == "left"){
+			var img = document.getElementById("imgLeft");
+		} else if(direction == "down"){
+			var img = document.getElementById("imgDown");
+		} else if(direction == "up"){
+			var img = document.getElementById("imgUp");
+		}
+		ctx.drawImage(img,xaxis,yaxis);
+		
+	} else {
+		ctx.fillStyle = 'rgb(255,255, 0)';
+		ctx.strokeStyle = 'rgb(0,0, 0)';
+		ctx.arc(xaxis+9, yaxis+9, 7, 0, (Math.PI*2), true);
+		ctx.fill()
+	}
+	
+	shape = shape + 1 ;
+		
+		//checks if pacman is going to die
+	if(((ghostXaxis-xaxis)<(16))&&((ghostXaxis-xaxis)>(0))&&((ghostYaxis-yaxis)<(16))&&((ghostYaxis-yaxis)>(0))){
+		if(allowrun){
+			score = score + 200;
+			ghostXaxis = 223;
+			ghostYaxis = 213;
+		}else{
+			if(lives >0){
+			lostLife();
+			} else {
+				endGame();
+			}
+		}
+	}
+	
+	}
+	//resets board if every dot has been eaten
+	if(eaten == 224){
+		Restart();
+		
+	}
+	return shape && score &&xaxis && yaxis &&ghostXaxis && ghostYaxis && eaten && switch1 && allowrun && ghostXaxis && ghostYaxis;
+	
+}
+function Restart(){
+	// Resets all variables
+	switch1 = false;
+	switch2 = false;
+	xaxis = 223;
+	yaxis = 403;
+	ghostXaxis = 223;
+	ghostYaxis = 213;
+	ghostXaxis1 = 223;
+	ghostYaxis1 = 243;
+	wait = 1;
+	ball1 =2;
+	third1 = "null";
+	singleXaxisPellets = [32,49,69,89,129,149,169,189,209,256,274,294,314,334,354,374,394,414,429,32,111,209,256,350,429,32,111,209,209,209,209,209,256,350,429,32,111,209,256,350,429,32,102,209,256,350,429,32,49,69,89,109,129,149,169,189,209,224,239,256,274,294,314,334,374,394,414,429,32,111,160,303,350,429,32,111,160,303,350,429,32,49,69,89,109,160,180,195,210,256,276,291,305,350,370,390,410,429,111,111,111,111,111,111,111,111,111,111,111,111,111,111,111,111,350,350,350,350,350,350,350,350,350,350,350,350,350,350,350,32,49,69,89,129,149,169,189,209,256,274,294,314,334,374,394,414,429,32,209,256,429,32,209,256,429,32,49,69,89,160,180,195,210,256,276,291,305,370,390,410,429,32,49,69,140,163,186,209,223,255,278,301,324,398,414,429,69,163,301,398,69,163,301,398,32,49,69,89,109,129,149,169,189,209,224,239,256,274,294,314,334,354,374,394,414,429,32,209,256,429,32,209,256,429];
+    singleYaxisPellets = [62, 62, 62, 62, 62,62,62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 77, 77, 77, 77, 77, 77, 90, 90, 90, 90, 90, 90, 103, 103, 103, 103, 103, 103, 103,124,124,124,124,124,124,124,124,124,124,124, 124, 124, 124, 124,124,124, 124, 124, 124, 124, 124, 124, 124, 124, 124, 124, 124, 145, 145, 145,145,145,145,155,155,155,155,155,155,172,172,172,172,172,172,172,172,172,172,172,172,172,172,172,172,172,172,192,192,212,232,252,272,292,312,332,347,365,385,409,425,445,459,192,212,232,252,272,292,312,332,347,365,385,409,425,445,459,365,365,365,365,365,365,365,365,365,365,365,365,365,365,365,365,365,365,379,379,379,379,392,392,392,392,461,461,461,461,461,461,461,461,461,461,461,461,461,461,461,461,412,412,412,412,412,412,412,412,412,412,412,412,412,412,412,426,426,426,426,445,445,445,445,506,506,506,506,506,506,506,506,506,506,506,506,506,506,506,506,506,506,506,506,506,506,476,476,476,476,489,489,489,489];
+	eaten = 0;
+	switch1 = true;
+	switch2 = true;
+	draw();
+	bigdot1 = true;
+    bigdot2 = true;
+    bigdot3 = true;
+    bigdot4 = true;
+	return xaxis && yaxis && ghostXaxis && ghostYaxis && ghostXaxis1 && ghostYaxis1 && wait && ball1 && third1 && singleXaxisPellets && singleYaxisPellets && bigdot1&& bigdot2&& bigdot3&& bigdot4; 
+}
+function drawghost() {
+	//draws ghost
+	if(lives >0){
+	var canvas = document.getElementById("canvas");
+	var ctx = canvas.getContext('2d') ;
+	if(allowrun){
+		// if the ghost is in runaway
+		var img  = document.getElementById("scared");
+	}else{
+	var img = document.getElementById("ghost");
+	}
+	ctx.drawImage(img,ghostXaxis,ghostYaxis);
+		
+		//checks end
+	if(((ghostXaxis-xaxis)<=(16))&&((ghostXaxis-xaxis)>=(0))&&((ghostYaxis-yaxis)<=(16))&&((ghostYaxis-yaxis)>=(0))){
+		if(allowrun){
+			score = score + 200;
+			ghostXaxis =223;
+			ghostYaxis =213;
+		}else if(lives >0){
+			lostLife();
+		} else {
+			endGame();
+		}
+	}
+	}
+	return ghostXaxis && ghostYaxis && score;
+		
+	
+}
+function drawghost1() {
+	//Same but other ghost
+	if(lives > 0){
+	var canvas = document.getElementById("canvas");
+	var ctx = canvas.getContext('2d') ;
+	var img = document.getElementById("ghost2");
+	ctx.drawImage(img,ghostXaxis1,ghostYaxis1);
+	if(((ghostXaxis1-xaxis)<=(18))&&((ghostXaxis1-xaxis)>=(0))&&((ghostYaxis1-yaxis)<=(18))&&((ghostYaxis1-yaxis)>=(0))){
+		if(allowrun){
+			score = score + 200;
+			ghostXaxis =223;
+			ghostYaxis =213;
+		}else if(lives > 0){
+			lostLife();
+		} else {
+			endGame();
+		}
+	}
+	}
+	return ghostXaxis1 && ghostYaxis1 && score;
+	
+}
+function lostLife(){
+	//Resets positions of objects but leves dots and takes away life
+	switch1 = false;
+	lives = lives - 1;
+	xaxis = 223;
+	yaxis = 403;
+	ghostXaxis = 223;
+	ghostYaxis = 213;
+	ghostXaxis1 = 223;
+	ghostYaxis1 = 243;
+	wait = 1;
+	ball1 =2;
+	third1 = "null"
+	
+	draw();
+	switch1 = true;
+	
+	return xaxis && yaxis && ghostXaxis && ghostYaxis && ghostXaxis1 && ghostYaxis1 && wait && ball1 && third1 && lives; 
+}
+
+function endGame(){
+	
+	// End game function
+	lives = null;
+	var canvas = document.getElementById("canvas");
+   var ctx = canvas.getContext('2d');
+	
+	//Wipes screen clean
+	ctx.fillStyle = 'rgb(0,0, 0)';
+	ctx.fillRect(0, 0, canvas.width, canvas.height);
+	
+	//image at top
+	var homeimg = document.getElementById("home");
+	ctx.drawImage(homeimg,0,25);
+	
+	//Rights score board
+	ctx.font="10px 'Press Start 2P'";
+	ctx.fillStyle=("white");
+	var name = "UserName";
+	chosename(name);
+	ctx.fillText("Scores:",190, 260);
+	var final = score;
+	playersScore.push(final)
+	
+	var b = playersScore.slice(0).sort(function(a, b){return a-b});
+	c = b.reverse();
+	var c = playersScore.slice(0).sort(function(a, b){return a-b});
+    console.log("playersScore ="+playersScore);
+	console.log("c="+c);
+	console.log("b"+b);
+	for(var i = 0; i<players.length;i++){
+		if(playersScore[i]==b[0]){
+			ctx.fillText("1."+players[i],140,300);
+		} else if(playersScore[i]==b[1]){
+			ctx.fillText("2."+players[i],140,330);
+		} else if(playersScore[i]==b[2]){
+			ctx.fillText("3."+players[i],140,360);
+		}
+			ctx.fillText(b[0],250,300);
+			ctx.fillText(b[1],250,330);
+			ctx.fillText(b[2],250,360);
+		
+	}
+	a = 0;
+	//gets ready to restart
+	switch1 =false;
+	switch2=false;
+	ctx.fillText("Press D/right to restart",115,390);
+	setTimeout(home,5000)
+	window.removeEventListener("keydown", Move, true);
+	window.removeEventListener("keydown", Change, true);
+	//window.removeEventListener("keydown", doubleghostMove, true);
+	//window.removeEventListener("keydown", ghostChange, true);
+	return playersScore && players && a && switch1 &&switch2;
+	
+	
+}
+function chosename(name){
+	
+	//Prompt to get usersname
+	name = prompt("What is your name?", name);
+	if(name == null){
+		name = "UserName";
+		players.push(name);
+	} else if(name.length > 8){
+		//stop names covering score
+		alert("Too long")
+		chosename()
+	}else {
+		players.push(name);
+	}
+
+	return players;
+}
+//Home Screen
+function home(){
+	//onload function
+	
+	window.addEventListener("keydown", enter, true);
+	var canvas = document.getElementById("canvas");
+	var ctx = canvas.getContext('2d');
+	
+	//fills with black
+	ctx.fillStyle = 'rgb(0,0, 0)';
+	ctx.fillRect(0, 0, canvas.width, canvas.height);
+	var home = document.getElementById("home");
+	ctx.drawImage(home,0,25);
+	ctx.fillStyle=("black");
+	ctx.fillRect(140,280,100,100)
+	
+	// rights up everything
+	ctx.font="10px 'Press Start 2P'";
+	ctx.fillStyle=("white");
+	ctx.fillText("ONE PLAYER",170,300);
+	ctx.fillText("TWO PLAYER",170,330);
+	ctx.fillText("Press D/right to start",115,390);
+	ctx.fillText("WASD controls",160,420);
+	
+	//draws arrow
+	ctx.moveTo(150,arrowYAxis);
+	ctx.lineTo(150,(arrowYAxis+5));
+	ctx.lineTo(160,(arrowYAxis));
+	ctx.lineTo(150,(arrowYAxis-5));
+	ctx.lineTo(150,(arrowYAxis));
+	ctx.fill();
+	ctx.closePath();
+	playStyle = "single";
+	return playStyle;
+	
+	
+}
+function enter(key){
+	var canvas = document.getElementById("canvas");
+	var ctx = canvas.getContext('2d');
+	key = key || window.event;
+	
+	//forward press starts game
+	if((key.keyCode == 68)&&(a < 2)) {
+		a=a+1;
+	}
+	if((key.keyCode == 83)&&(a < 2)&& (arrowYAxis!=325)){
+		//moves arrow to change play style
+		ctx.beginPath()
+		ctx.fillStyle="black";
+		ctx.moveTo(150,arrowYAxis);
+		ctx.lineTo(150,(arrowYAxis+5));
+		ctx.lineTo(160,(arrowYAxis));
+		ctx.lineTo(150,(arrowYAxis-5));
+		ctx.lineTo(150,(arrowYAxis));
+		ctx.fill();
+		ctx.stroke();
+		ctx.closePath();
+		ctx.beginPath()
+		ctx.fillStyle="white";
+		ctx.moveTo(150,arrowYAxis+30);
+		ctx.lineTo(150,(arrowYAxis+25));
+		ctx.lineTo(160,(arrowYAxis+30));
+		ctx.lineTo(150,(arrowYAxis+35));
+		ctx.lineTo(150,(arrowYAxis+30));
+		ctx.fill();
+		ctx.closePath();
+		playStyle = "double";
+		return arrowYAxis && playStyle;
+	} 
+	if((key.keyCode == 87)&&(a < 2)){
+		//moves arrow to change play style
+		ctx.beginPath()
+		ctx.fillStyle="white";
+		ctx.moveTo(150,arrowYAxis);
+		ctx.lineTo(150,(arrowYAxis-5));
+		ctx.lineTo(160,(arrowYAxis));
+		ctx.lineTo(150,(arrowYAxis+5));
+		ctx.lineTo(150,(arrowYAxis));
+		ctx.fill();
+		ctx.stroke();
+		ctx.closePath();
+		ctx.fillStyle="black";
+		ctx.beginPath()
+		ctx.moveTo(150,arrowYAxis+30);
+		ctx.lineTo(150,(arrowYAxis+25));
+		ctx.lineTo(160,(arrowYAxis+30));
+		ctx.lineTo(150,(arrowYAxis+35));
+		ctx.lineTo(150,(arrowYAxis+30));
+		ctx.fill();
+		ctx.stroke();
+		ctx.closePath()
+		playStyle = "single";
+		return arrowYAxis && playStyle;
+	}
+	if(a == 1){
+		//starts game
+		window.removeEventListener("keydown", enter);
+		Restart();
+		lostLife();
+		score = 0;
+		lives = 2;
+		window.removeEventListener("keydown", enter);
+		window.removeEventListener("keydown", home);
+		draw();
+		window.addEventListener("keydown", Move, true);
+		window.addEventListener("keydown", Change, true);
+		if(playStyle == "single"){
+		checker();
+		checker1();
+			switch1 =true;
+	switch2=true;
+		} else if(playStyle == "double"){
+			window.addEventListener("keydown", doubleGhostMove, true);
+			window.addEventListener("keydown", ghostChange, true);
+			switch1 =false;
+			switch2=false;
+		}
+	}
+	return arrowYAxis && a && playStyle;
+}</script>
+		<link rel="stylesheet" type="text/css" href="mais.css"/>
+		<link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
+	</head>
+
+	<body onload="home()">
+		<h1>
+			Pacman
+		</h1>
+		<canvas id="canvas" width="454" height="529">
+			<p>
+				<img src="images/Pac.gif" alt="s" id="home"/>
+				<img src="images/background.png" alt="s" id="img" width="111%"/>
+				<img src="images/Original_PacMan.png" alt="s" id="imgLeft"/>
+				<img src="images/Pacman2.png" alt="s" id="imgDown"/>
+				<img src="images/Pacman3.png" alt="s" id="imgRight"/>
+				<img src="images/Pacman4.png" alt="s" id="imgUp"/>
+				<img src="images/Ghost1.png" alt="s" id="ghost"/>
+				<img src="images/ghost2.png" alt="s" id="ghost1"/>
+				<img src="images/ghost3.png" alt="s" id="ghost2"/>
+				<img src="images/Scared.gif" alt="s" id="scared"/>
+				<!--<img src="images/PacmanBlack.png" alt="s" id="imgBLeft" width="19px;"/>
+				<img src="images/Pacman2Black.png" alt="s" id="imgBDown" />
+				<img src="images/Pacman3Black.png" alt="s" id="imgBRight" width="19px;"/>
+				<img src="images/Pacman4Black.png" alt="s" id="imgBUp" width="19px;"/> -->
+			</p>
+		</canvas>
+		
+	</body>
+	
+	
+	
+</html>
